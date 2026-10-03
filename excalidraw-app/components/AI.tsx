@@ -10,11 +10,17 @@ import {
 } from "@excalidraw/excalidraw";
 import { getDataURL } from "@excalidraw/excalidraw/data/blob";
 import { safelyParseJSON } from "@excalidraw/common";
+import { RequestError } from "@excalidraw/excalidraw/errors";
 
 import type { StreamChunk } from "@excalidraw/excalidraw";
 import type { ExcalidrawImperativeAPI } from "@excalidraw/excalidraw/types";
 
 import { TTDIndexedDBAdapter } from "../data/TTDStorage";
+import { getCustomAISettings } from "../data/customAISettings";
+import {
+  customDiagramToCodeGenerate,
+  customTTDStreamFetch,
+} from "../data/customAIClient";
 
 export const AIComponents = ({
   excalidrawAPI,
@@ -49,6 +55,30 @@ export const AIComponents = ({
           const dataURL = await getDataURL(blob);
 
           const textFromFrameChildren = getTextFromElements(children);
+
+          const customSettings = getCustomAISettings();
+          if (customSettings.enabled && customSettings.baseURL) {
+            return customDiagramToCodeGenerate({
+              settings: customSettings,
+              dataURL,
+              texts: textFromFrameChildren ? [textFromFrameChildren] : [],
+              theme: appState.theme,
+              onPartial,
+            });
+          }
+
+          if (!customSettings.enabled) {
+            return {
+              html: `<html>
+              <body style="margin: 0; text-align: center; font-family: sans-serif;">
+              <div style="display: flex; align-items: center; justify-content: center; flex-direction: column; height: 100vh; padding: 0 40px">
+                <h3 style="color:#e03131">Custom AI is Disabled</h3>
+                <p>Please open the main menu (☰) &gt; <b>AI Settings</b> to enable your custom LLM and enter your API credentials.</p>
+              </div>
+              </body>
+              </html>`,
+            };
+          }
 
           const response = await fetch(
             `${
@@ -153,6 +183,27 @@ export const AIComponents = ({
       <TTDDialog
         onTextSubmit={async (props) => {
           const { onChunk, onStreamCreated, signal, messages } = props;
+
+          const customSettings = getCustomAISettings();
+          if (customSettings.enabled && customSettings.baseURL) {
+            return customTTDStreamFetch({
+              settings: customSettings,
+              messages,
+              onChunk,
+              onStreamCreated,
+              signal,
+            });
+          }
+
+          if (!customSettings.enabled) {
+            return {
+              error: new RequestError({
+                message:
+                  "Custom AI is disabled. Please enable it in 'AI Settings' from the main menu and set your API key/endpoint.",
+                status: 400,
+              }),
+            };
+          }
 
           const result = await TTDStreamFetch({
             url: `${

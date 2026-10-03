@@ -14,13 +14,64 @@
 
 <div align="center">
   <h2>
-    An open source virtual hand-drawn style whiteboard. </br>
-    Collaborative and end-to-end encrypted. </br>
+    An open source virtual hand-drawn style whiteboard with Custom AI (BYOK) support. </br>
+    Collaborative, end-to-end encrypted, and self-hostable. </br>
   <br />
   </h2>
 </div>
 
+---
+
+# ✨ Custom Features & Enhancements
+
+This fork contains powerful local enhancements enabling full independence from proprietary cloud AI endpoints, true Bring-Your-Own-Key (BYOK) LLM support, LAN-wide accessibility, and seamless live development containerization.
+
+---
+
+### 1. 🧠 Custom LLM Provider Integration 
+* **Direct OpenAI-Compatible Integration:** Connect Excalidraw directly to any OpenAI-compatible API endpoint (OpenAI, OpenRouter, Groq, DeepSeek, Local Ollama, LM Studio, vLLM, etc.).
+* **Zero Cloud Lock-in / Bypasses CORS & Rate Limits:** No longer blocked by `oss-ai.excalidraw.com` CORS policies or strict daily 429 quota limits.
+* **Text-to-Diagram Streaming:** Full interactive chat & streaming support to generate and edit Mermaid diagrams on canvas using your chosen LLM.
+* **Diagram-to-Code (Vision Support):** Generate responsive Tailwind CSS & HTML code from wireframes using custom Vision-enabled models (e.g. `gpt-4o`, `claude-3-5-sonnet`, `llama-3.2-vision`).
+* **In-App Configuration Dialog:** Easily toggle and configure settings directly from the application menu (**☰ Hamburger Menu ➔ AI Settings**):
+  * **Enable / Disable Custom LLM toggle**
+  * **API Base URL** (e.g., `https://api.openai.com/v1`, `https://openrouter.ai/api/v1`, or `http://localhost:11434/v1`)
+  * **API Key** (Stored locally and securely in browser `localStorage`)
+  * **Model Name** (e.g. `gpt-4o`, `deepseek-chat`, `llama3`)
+  * **Vision Model Name** for Wireframe-to-Code generation
+
+---
+
+### 2. 🌐 LAN & Remote Network Access
+* **Vite Host Binding:** Configured `host: "0.0.0.0"` in `vite.config.mts` allowing the application to be accessed from any device on your local network (e.g., `http://192.168.*.*:3000`).
+
+---
+
+### 3. ⚡ Docker Hot-Reload & Development Environment 
+* **Live Volume Mounting (`Dockerfile.dev` & `docker-compose.yml`):**
+  * Runs the fast Vite HMR development server inside Docker.
+  * Code changes made locally reflect immediately in the browser without manual image rebuilds (`CHOKIDAR_USEPOLLING=true`).
+* **Quick Start with Docker Compose:**
+  ```bash
+  # Start with live Hot Reload and LAN access
+  docker compose up -d --build
+  ```
+
+---
+
 <br />
+<br />
+<br />
+<br />
+<br />
+<hr style="border: 2px solid #555;" />
+<br />
+<br />
+
+# 📦 Original Excalidraw Documentation
+
+<br />
+
 <p align="center">
   <a href="https://github.com/excalidraw/excalidraw/blob/master/LICENSE">
     <img alt="Excalidraw is released under the MIT license." src="https://img.shields.io/badge/license-MIT-blue.svg"  /></a>

@@ -1,0 +1,22 @@
+FROM node:22-alpine
+
+WORKDIR /opt/node_app
+
+# Install build dependencies if needed
+RUN apk add --no-cache git
+
+# Copy root dependency manifests
+COPY package.json yarn.lock ./
+COPY excalidraw-app/package.json ./excalidraw-app/
+COPY packages/ ./packages/
+
+# Install dependencies
+RUN yarn --network-timeout 600000
+
+# Copy application source
+COPY . .
+
+EXPOSE 3000
+
+# Run Vite dev server with Hot Reload
+CMD ["yarn", "--cwd", "./excalidraw-app", "start"]
